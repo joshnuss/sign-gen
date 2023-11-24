@@ -11,5 +11,12 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "potrace": "^2.1.8",
+    "sade": "^1.8.1",
+    "sharp": "^0.32.6",
+    "svgdom": "^0.1.19",
+    "tempy": "^3.1.0"
+  }
 }
