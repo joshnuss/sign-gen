@@ -12,7 +12,8 @@ prog
   .describe('generate pcb files in shape of input file')
   .option('--scale', 'Scale factor', 1)
   .option('--segments', 'Number of segments in outline', 100)
-  .example('logo.svg --scale 2 --segments 200')
+  .option('--mounting-holes', 'Location on mounting holes. Comma seperated x1,y1,x2,y2....')
+  .example('logo.svg --scale 2 --segments 200 --mounting-holes 10,10,20,20')
 
 const command = prog.parse(process.argv, { lazy: true })
 
