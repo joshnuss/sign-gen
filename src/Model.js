@@ -1,32 +1,28 @@
 export default class Model {
-  constructor (points) {
+  constructor(points) {
     this.points = points
     this.compute()
   }
 
-  translate (x, y) {
-    this.points = this.points.map((point) => {
-      return {
-        x: point.x + x,
-        y: point.y + y
-      }
-    })
+  translate(x, y) {
+    this.points = this.points.map((point) => ({
+      x: point.x + x,
+      y: point.y + y
+    }))
 
     this.compute()
   }
 
-  scale (ratio) {
-    this.points = this.points.map((point) => {
-      return {
-        x: point.x * ratio,
-        y: point.y * ratio
-      }
-    })
+  scale(ratio) {
+    this.points = this.points.map((point) => ({
+      x: point.x * ratio,
+      y: point.y * ratio
+    }))
 
     this.compute()
   }
 
-  compute () {
+  compute() {
     const min = {}
     const max = {}
 

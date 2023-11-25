@@ -7,7 +7,7 @@ import Model from './Model.js'
 
 const trace = util.promisify(potrace.trace)
 
-export async function read (path, segments) {
+export async function read(path, segments) {
   const bitmapPath = await convertToBmp(path)
   const svg = await trace(bitmapPath)
   const shape = extractPath(svg)
@@ -19,7 +19,7 @@ export async function read (path, segments) {
   return model
 }
 
-async function convertToBmp (path) {
+async function convertToBmp(path) {
   const outputPath = temporaryFile()
 
   await sharp(path).toFile(outputPath)
@@ -27,7 +27,7 @@ async function convertToBmp (path) {
   return outputPath
 }
 
-function extractPath (svg) {
+function extractPath(svg) {
   const doc = createSVGDocument()
 
   doc.documentElement.innerHTML = svg
@@ -35,7 +35,7 @@ function extractPath (svg) {
   return doc.querySelector('path')
 }
 
-function flatten (path, segments) {
+function flatten(path, segments) {
   const points = []
   const length = path.getTotalLength()
 

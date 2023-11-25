@@ -2,11 +2,11 @@ import path from 'path'
 import fs from 'fs'
 
 export default class SVGWriter {
-  constructor (board) {
+  constructor(board) {
     this.board = board
   }
 
-  async write (folder) {
+  async write(folder) {
     const { layers, holes, outline } = this.board
 
     this.#writeLayer(folder, 'mask.top.svg', layers.mask.top)
@@ -32,7 +32,7 @@ export default class SVGWriter {
     ])
   }
 
-  #writeLayer (folder, file, layer) {
+  #writeLayer(folder, file, layer) {
     this.#writeFile(folder, file, (stream) => {
       layer.forEach((shape) => {
         switch (shape.type) {
@@ -76,7 +76,7 @@ export default class SVGWriter {
     })
   }
 
-  #writeHoles (folder, file, holes) {
+  #writeHoles(folder, file, holes) {
     this.#writeFile(folder, file, (stream) => {
       holes.forEach((hole) => {
         stream.write(`<circle cx="${hole.cx}" cy="${hole.cy}" r="${hole.r}" fill="currentColor"/>`)
@@ -84,8 +84,8 @@ export default class SVGWriter {
     })
   }
 
-  #writeFile (folder, file, callback) {
-    const board = this.board
+  #writeFile(folder, file, callback) {
+    const { board } = this
     const filePath = path.join(folder, file)
     const stream = fs.createWriteStream(filePath)
 
@@ -98,7 +98,7 @@ export default class SVGWriter {
     stream.close()
   }
 
-  #writeBoard (folder, file, parts) {
+  #writeBoard(folder, file, parts) {
     this.#writeFile(folder, file, (stream) => {
       parts.forEach((part) => {
         const filePath = path.join(folder, part.file)
