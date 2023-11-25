@@ -1,0 +1,89 @@
+import path from 'path'
+import fs from 'fs'
+
+export default class BoardWriter {
+  constructor(board) {
+    this.board = board
+  }
+
+  async write(folder) {
+    const { layers, holes, outline } = this.board
+
+    this.#writeSvgLayer(folder, 'mask.top.svg', layers.mask.top)
+    this.#writeSvgLayer(folder, 'mask.bottom.svg', layers.mask.bottom)
+    this.#writeSvgLayer(folder, 'silkscreen.top.svg', layers.silkscreen.top)
+    this.#writeSvgLayer(folder, 'silkscreen.bottom.svg', layers.silkscreen.bottom)
+    this.#writeSvgLayer(folder, 'copper.top.svg', layers.copper.top)
+    this.#writeSvgLayer(folder, 'copper.bottom.svg', layers.copper.bottom)
+    this.#writeSvgLayer(folder, 'edge.svg', outline)
+    this.#writeSvgHoles(folder, 'holes.plated.svg', holes.plated)
+    this.#writeSvgHoles(folder, 'holes.unplated.svg', holes.unplated)
+  }
+
+  #writeSvgLayer(folder, file, layer) {
+    this.#writeSvg(folder, file, (stream) => {
+      layer.forEach((shape) => {
+        switch (shape.type) {
+          case 'polyline':
+            stream.write(`<polyline points="${shape.points.map((point) => `${point.x}, ${point.y}`).join(' ')}"`)
+            break
+
+          case 'circle':
+            stream.write(`<circle cx="${shape.cx}" cy="${shape.cy}" r="${shape.r}"`)
+            break
+
+          case 'rect':
+            stream.write(`<rect x="${shape.x}" y="${shape.y}" width="${shape.width}" height="${shape.height}"`)
+
+            if (shape.radius) {
+              stream.write(` rx="${shape.radius}"`)
+            }
+            break
+
+          default:
+            throw Error(`Unknown shape type '${shape.type}'`)
+        }
+
+        const draw = shape.draw || 'stroke'
+        const strokeWidth = shape.stroke || 1
+
+        if (draw == 'stroke') {
+          stream.write(' stroke="currentColor" fill="transparent"')
+        } else if (draw == 'fill') {
+          stream.write(' stroke="transparent" fill="currentColor"')
+        } else if (draw == 'both') {
+          stream.write(' stroke="currentColor" fill="currentColor"')
+        }
+
+        if (['stroke', 'both'].includes(draw)) {
+          stream.write(` stroke-width="${strokeWidth}"`)
+        }
+
+        stream.write("/>\n")
+      })
+
+    })
+  }
+
+  #writeSvgHoles(folder, file, holes) {
+    this.#writeSvg(folder, file, (stream) => {
+      holes.forEach((hole) => {
+        stream.write(`<circle cx="${hole.cx}" cy="${hole.cy}" r="${hole.r}" fill="currentColor"/>`)
+      })
+    })
+  }
+
+  #writeSvg(folder, file, callback) {
+    const board = this.board
+    const filePath = path.join(folder, file)
+    const stream = fs.createWriteStream(filePath)
+
+    stream.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${board.width} ${board.height}" width="${board.width}" height="${board.height}">\n`)
+
+    callback(stream)
+
+    stream.write('</svg>\n')
+
+    stream.close()
+  }
+}
