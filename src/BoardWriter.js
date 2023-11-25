@@ -18,6 +18,18 @@ export default class BoardWriter {
     this.#writeSvgLayer(folder, 'edge.svg', outline)
     this.#writeSvgHoles(folder, 'holes.plated.svg', holes.plated)
     this.#writeSvgHoles(folder, 'holes.unplated.svg', holes.unplated)
+
+    this.#writeSvgBoard(folder, 'board.svg', [
+      { file: 'silkscreen.top.svg', color: 'red' },
+      { file: 'mask.top.svg', color: 'red' },
+      { file: 'copper.top.svg', color: 'red' },
+      { file: 'copper.bottom.svg', color: 'blue' },
+      { file: 'mask.bottom.svg', color: 'red' },
+      { file: 'silkscreen.bottom.svg', color: 'red' },
+      { file: 'holes.plated.svg', color: 'yellow' },
+      { file: 'holes.unplated.svg', color: 'brown' },
+      { file: 'edge.svg', color: 'green' },
+    ])
   }
 
   #writeSvgLayer(folder, file, layer) {
@@ -85,5 +97,17 @@ export default class BoardWriter {
     stream.write('</svg>\n')
 
     stream.close()
+  }
+
+  #writeSvgBoard(folder, file, parts) {
+    this.#writeSvg(folder, file, (stream) => {
+      parts.forEach((part) => {
+        const filePath = path.join(folder, part.file)
+
+        stream.write(`<g style="color: ${part.color}">\n`)
+        stream.write(fs.readFileSync(filePath))
+        stream.write(`</g>\n`)
+      })
+    })
   }
 }
