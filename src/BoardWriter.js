@@ -1,3 +1,4 @@
+import path from 'path'
 import SVGWriter from './SVGWriter.js'
 import GerberWriter from './GerberWriter.js'
 import ExcellonWriter from './ExcellonWriter.js'
@@ -10,8 +11,11 @@ export default class BoardWriter {
   }
 
   async write(folder) {
-    await this.svg.write(folder)
-    await this.gerber.write(folder)
-    await this.excellon.write(folder)
+    const svgPath = path.join(folder, 'svg')
+    const gerbersPath = path.join(folder, 'gerbers')
+
+    await this.svg.write(svgPath)
+    await this.gerber.write(gerbersPath)
+    await this.excellon.write(gerbersPath)
   }
 }

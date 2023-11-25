@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import sade from 'sade'
+import path from 'path'
 import fs from 'fs'
 import { read } from './src/ModelReader.js'
 import BoardWriter from './src/BoardWriter.js'
@@ -69,9 +70,18 @@ if (command) {
     height: model.height
   }
 
-  await fs.promises.mkdir(outputFolder, { recursive: true })
+  await createDirs(outputFolder)
 
   const writer = new BoardWriter(board)
 
   await writer.write(outputFolder)
+}
+
+async function createDirs(output) {
+  const gerbers = path.join(output, 'gerbers')
+  const svg = path.join(output, 'svg')
+
+  await fs.promises.mkdir(output, { recursive: true })
+  await fs.promises.mkdir(gerbers, { recursive: true })
+  await fs.promises.mkdir(svg, { recursive: true })
 }
