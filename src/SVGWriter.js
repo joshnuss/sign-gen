@@ -9,17 +9,17 @@ export default class SVGWriter {
   async write(folder) {
     const { layers, holes, outline } = this.board
 
-    this.#writeLayer(folder, 'mask.top.svg', layers.mask.top)
-    this.#writeLayer(folder, 'mask.bottom.svg', layers.mask.bottom)
-    this.#writeLayer(folder, 'silkscreen.top.svg', layers.silkscreen.top)
-    this.#writeLayer(folder, 'silkscreen.bottom.svg', layers.silkscreen.bottom)
-    this.#writeLayer(folder, 'copper.top.svg', layers.copper.top)
-    this.#writeLayer(folder, 'copper.bottom.svg', layers.copper.bottom)
-    this.#writeLayer(folder, 'edge.svg', outline)
-    this.#writeHoles(folder, 'holes.plated.svg', holes.plated)
-    this.#writeHoles(folder, 'holes.unplated.svg', holes.unplated)
+    await this.#writeLayer(folder, 'mask.top.svg', layers.mask.top)
+    await this.#writeLayer(folder, 'mask.bottom.svg', layers.mask.bottom)
+    await this.#writeLayer(folder, 'silkscreen.top.svg', layers.silkscreen.top)
+    await this.#writeLayer(folder, 'silkscreen.bottom.svg', layers.silkscreen.bottom)
+    await this.#writeLayer(folder, 'copper.top.svg', layers.copper.top)
+    await this.#writeLayer(folder, 'copper.bottom.svg', layers.copper.bottom)
+    await this.#writeLayer(folder, 'edge.svg', outline)
+    await this.#writeHoles(folder, 'holes.plated.svg', holes.plated)
+    await this.#writeHoles(folder, 'holes.unplated.svg', holes.unplated)
 
-    this.#writeBoard(folder, 'board.svg', [
+    await this.#writeBoard(folder, 'board.svg', [
       { file: 'silkscreen.top.svg', color: 'red' },
       { file: 'mask.top.svg', color: 'red' },
       { file: 'copper.top.svg', color: 'red' },
@@ -32,8 +32,8 @@ export default class SVGWriter {
     ])
   }
 
-  #writeLayer(folder, file, layer) {
-    this.#writeFile(folder, file, (stream) => {
+  async #writeLayer(folder, file, layer) {
+    await this.#writeFile(folder, file, (stream) => {
       layer.forEach((shape) => {
         switch (shape.type) {
           case 'polyline':
@@ -76,15 +76,15 @@ export default class SVGWriter {
     })
   }
 
-  #writeHoles(folder, file, holes) {
-    this.#writeFile(folder, file, (stream) => {
+  async #writeHoles(folder, file, holes) {
+    await this.#writeFile(folder, file, (stream) => {
       holes.forEach((hole) => {
         stream.write(`<circle cx="${hole.cx}" cy="${hole.cy}" r="${hole.r}" fill="currentColor"/>`)
       })
     })
   }
 
-  #writeFile(folder, file, callback) {
+  async #writeFile(folder, file, callback) {
     const { board } = this
     const filePath = path.join(folder, file)
     const stream = fs.createWriteStream(filePath)
@@ -98,8 +98,8 @@ export default class SVGWriter {
     stream.close()
   }
 
-  #writeBoard(folder, file, parts) {
-    this.#writeFile(folder, file, (stream) => {
+  async #writeBoard(folder, file, parts) {
+    await this.#writeFile(folder, file, (stream) => {
       parts.forEach((part) => {
         const filePath = path.join(folder, part.file)
 
