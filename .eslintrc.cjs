@@ -27,6 +27,7 @@ module.exports = {
     'no-use-before-define': 'off',
     semi: ['error', 'never'],
     'object-curly-newline': 'off',
-    'comma-dangle': ['error', 'never']
+    'comma-dangle': ['error', 'never'],
+    'no-plusplus': 'off'
   }
 }
