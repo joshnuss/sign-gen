@@ -74,9 +74,4 @@ if (command) {
   const writer = new BoardWriter(board)
 
   await writer.write(outputFolder)
-
-  console.log(`<svg width="${model.width}" height="${model.height}">`)
-  console.log(`  <polyline points="${model.points.map(p => `${p.x},${p.y}`).join(' ')}"/>`)
-  console.log(`</svg>`)
 }
-
