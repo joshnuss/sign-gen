@@ -39,13 +39,15 @@ function flatten(path, segments) {
   const points = []
   const length = path.getTotalLength()
 
-  let point = path.getPointAtLength(0)
-  points.push(point)
+  const first = path.getPointAtLength(0)
+  points.push(first)
 
   for (let i = (length/segments); i<=length; i+=(length/segments)){
-    point = path.getPointAtLength(i)
+    const point = path.getPointAtLength(i)
     points.push(point)
   }
+
+  points.push(first)
 
   return points
 }
