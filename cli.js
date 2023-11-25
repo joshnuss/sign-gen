@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-import pkg from './package.json' with { type: "json" }
 import sade from 'sade'
 import fs from 'fs'
 import { read } from './src/ModelReader.js'
 import BoardWriter from './src/BoardWriter.js'
 
+const pkg = JSON.parse(await fs.promises.readFile('./package.json'))
 const prog = sade(pkg.name)
 
 prog.version(pkg.version)
@@ -20,7 +20,7 @@ prog
 const command = prog.parse(process.argv, { lazy: true })
 
 if (command) {
-  const [ inputFile, outputFolder, options ] = command.args
+  const [inputFile, outputFolder, options] = command.args
 
   const model = await read(inputFile, options.segments)
 
@@ -48,7 +48,7 @@ if (command) {
         { type: 'rect', x: 20, y: 20, width: 40, height: 80, draw: 'stroke', stroke: 4, radius: 8 }
       ],
       bottom: []
-    },
+    }
   }
 
   const board = {
