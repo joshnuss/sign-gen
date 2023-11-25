@@ -55,11 +55,11 @@ if (command) {
     layers,
     holes: {
       plated: [
-        { cx: 10, cy: 20, r: 5 },
-        { cx: 50, cy: 20, r: 15 }
+        { cx: 10, cy: 20, d: 5 },
+        { cx: 50, cy: 20, d: 15 }
       ],
       unplated: [
-        { cx: 40, cy: 20, r: 5 }
+        { cx: 40, cy: 20, d: 5 }
       ]
     },
     outline: [
