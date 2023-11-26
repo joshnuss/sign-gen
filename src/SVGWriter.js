@@ -87,15 +87,20 @@ export default class SVGWriter {
   async #writeFile(folder, file, callback) {
     const { board } = this
     const filePath = path.join(folder, file)
-    const stream = fs.createWriteStream(filePath)
 
-    stream.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${board.width} ${board.height}" width="${board.width}" height="${board.height}">\n`)
+    return new Promise((resolve, reject) => {
+      const stream = fs.createWriteStream(filePath)
 
-    callback(stream)
+      stream.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${board.width} ${board.height}" width="${board.width}" height="${board.height}">\n`)
 
-    stream.write('</svg>\n')
+      callback(stream)
 
-    stream.close()
+      stream.write('</svg>\n')
+
+      stream.end()
+      stream.on('finish', () => { resolve(true) })
+      stream.on('error', reject)
+    })
   }
 
   async #writeBoard(folder, file, parts) {
