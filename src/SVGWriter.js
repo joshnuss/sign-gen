@@ -3,8 +3,9 @@ import fs from 'fs'
 import { writeStream } from './stream.js'
 
 export default class SVGWriter {
-  constructor(board) {
+  constructor(board, { project }) {
     this.board = board
+    this.project = project
   }
 
   async write(folder) {
@@ -87,7 +88,7 @@ export default class SVGWriter {
 
   async #writeFile(folder, file, callback) {
     const { board } = this
-    const filePath = path.join(folder, file)
+    const filePath = path.join(folder, `${this.project}-${file}`)
 
     await writeStream(filePath, (stream) => {
       stream.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${board.width} ${board.height}" width="${board.width}" height="${board.height}">\n`)
@@ -101,7 +102,7 @@ export default class SVGWriter {
   async #writeBoard(folder, file, parts) {
     await this.#writeFile(folder, file, (stream) => {
       parts.forEach((part) => {
-        const filePath = path.join(folder, part.file)
+        const filePath = path.join(folder, `${this.project}-${part.file}`)
 
         stream.write(`<g style="color: ${part.color}">\n`)
         stream.write(fs.readFileSync(filePath))

@@ -4,10 +4,10 @@ import GerberWriter from './GerberWriter.js'
 import ExcellonWriter from './ExcellonWriter.js'
 
 export default class BoardWriter {
-  constructor(board) {
-    this.svg = new SVGWriter(board)
-    this.gerber = new GerberWriter(board)
-    this.excellon = new ExcellonWriter(board)
+  constructor(board, options = {}) {
+    this.svg = new SVGWriter(board, options)
+    this.gerber = new GerberWriter(board, options)
+    this.excellon = new ExcellonWriter(board, options)
   }
 
   async write(folder) {

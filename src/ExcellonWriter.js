@@ -1,10 +1,12 @@
 import path from 'path'
 import fs from 'fs'
 
+const unit = 'metric'
+
 export default class ExcellonWriter {
-  constructor(board, unit = 'metric') {
+  constructor(board, { project }) {
     this.holes = board.holes
-    this.unit = unit
+    this.project = project
   }
 
   async write(folder) {
@@ -13,7 +15,7 @@ export default class ExcellonWriter {
   }
 
   async #writeFile(folder, file, holes) {
-    const filePath = path.join(folder, file)
+    const filePath = path.join(folder, `${this.project}-${file}`)
     const indexes = mapTools(holes)
     const io = fs.createWriteStream(filePath)
 
@@ -23,7 +25,7 @@ export default class ExcellonWriter {
     io.write('FMAT,2\n')
 
     // specify measurement unit
-    io.write(`${this.unit.toUpperCase()}\n`)
+    io.write(`${unit.toUpperCase()}\n`)
 
     // specify tools
     indexes.forEach((index, diameter) => {

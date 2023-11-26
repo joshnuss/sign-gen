@@ -22,6 +22,7 @@ const command = prog.parse(process.argv, { lazy: true })
 
 if (command) {
   const [inputFile, outputFolder, options] = command.args
+  const project = path.parse(inputFile).name
 
   const model = await read(inputFile, options.segments)
 
@@ -72,7 +73,7 @@ if (command) {
 
   await createDirs(outputFolder)
 
-  const writer = new BoardWriter(board)
+  const writer = new BoardWriter(board, { project })
 
   await writer.write(outputFolder)
 }
