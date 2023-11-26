@@ -7,6 +7,10 @@ import BoardWriter from './src/BoardWriter.js'
 
 const pkg = JSON.parse(await fs.promises.readFile('./package.json'))
 const prog = sade(pkg.name)
+const unit = {
+  key: 'mm',
+  name: 'metric'
+}
 
 prog.version(pkg.version)
 
@@ -73,7 +77,7 @@ if (command) {
 
   await createDirs(outputFolder)
 
-  const writer = new BoardWriter(board, { project })
+  const writer = new BoardWriter(board, { project, unit })
 
   await writer.write(outputFolder)
 }

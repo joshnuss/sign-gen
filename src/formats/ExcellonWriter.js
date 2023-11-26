@@ -1,12 +1,11 @@
 import path from 'path'
 import fs from 'fs'
 
-const unit = 'metric'
-
 export default class ExcellonWriter {
-  constructor(board, { project }) {
+  constructor(board, { project, unit }) {
     this.holes = board.holes
     this.project = project
+    this.unit = unit.name
   }
 
   async write(folder) {
@@ -25,7 +24,7 @@ export default class ExcellonWriter {
     io.write('FMAT,2\n')
 
     // specify measurement unit
-    io.write(`${unit.toUpperCase()}\n`)
+    io.write(`${this.unit.toUpperCase()}\n`)
 
     // specify tools
     indexes.forEach((index, diameter) => {
