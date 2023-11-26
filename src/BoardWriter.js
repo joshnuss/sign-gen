@@ -1,7 +1,7 @@
 import path from 'path'
-import SVGWriter from './SVGWriter.js'
-import GerberWriter from './GerberWriter.js'
-import ExcellonWriter from './ExcellonWriter.js'
+import SVGWriter from './formats/SVGWriter.js'
+import GerberWriter from './formats/GerberWriter.js'
+import ExcellonWriter from './formats/ExcellonWriter.js'
 
 export default class BoardWriter {
   constructor(board, options = {}) {
