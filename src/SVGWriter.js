@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import { writeStream } from './stream.js'
 
 export default class SVGWriter {
   constructor(board) {
@@ -88,18 +89,12 @@ export default class SVGWriter {
     const { board } = this
     const filePath = path.join(folder, file)
 
-    return new Promise((resolve, reject) => {
-      const stream = fs.createWriteStream(filePath)
-
+    await writeStream(filePath, (stream) => {
       stream.write(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${board.width} ${board.height}" width="${board.width}" height="${board.height}">\n`)
 
       callback(stream)
 
       stream.write('</svg>\n')
-
-      stream.end()
-      stream.on('finish', () => { resolve(true) })
-      stream.on('error', reject)
     })
   }
 
