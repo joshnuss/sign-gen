@@ -188,12 +188,6 @@ function gerberStream(stream) {
       stream.write(`G${plotStates[plotState]}*\n`)
     },
 
-    startMacro(name) {
-      macro = true
-
-      stream.write(`%AM${name}*\n`)
-    },
-
     apertureAttribute(key, ...values) {
       stream.write(`%TA.${key},${values.join(',')}*%\n`)
     },
