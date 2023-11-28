@@ -81,7 +81,7 @@ export default class SVGWriter {
   async #writeHoles(folder, file, holes) {
     await this.#writeFile(folder, file, (stream) => {
       holes.forEach((hole) => {
-        stream.write(`<circle cx="${hole.cx}" cy="${hole.cy}" r="${hole.r}" fill="currentColor"/>`)
+        stream.write(`<circle cx="${hole.cx}" cy="${hole.cy}" r="${hole.d/2}" fill="currentColor"/>`)
       })
     })
   }
