@@ -3,6 +3,7 @@ import fs from 'fs'
 
 export default class ExcellonWriter {
   constructor(board, { project, unit }) {
+    this.board = board
     this.holes = board.holes
     this.project = project
     this.unit = unit.name
@@ -48,8 +49,10 @@ export default class ExcellonWriter {
       // choose tool
       io.write(`T${index}\n`)
 
+      const point = this.#coordinate(hole)
+
       // specify drill position
-      io.write(`X${hole.cx - radius}Y${hole.cy - radius}\n`)
+      io.write(`X${point.x - radius}Y${point.y - radius}\n`)
     })
 
     // select no tool
@@ -59,6 +62,10 @@ export default class ExcellonWriter {
     io.write('M30\n')
 
     io.close()
+  }
+
+  #coordinate({ cx, cy }) {
+    return { x: cx, y: this.board.height - cy }
   }
 }
 
