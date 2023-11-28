@@ -4,6 +4,7 @@ export default class Board {
       { type: 'polyline', points: outline.points, stroke: 1 }
     ]
     this.components = []
+    this.nets = []
     this.layers = {
       paste: {
         top: [],
