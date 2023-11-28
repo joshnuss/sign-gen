@@ -1,6 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import { writeStream } from './stream.js'
+import UniqueSet from '../UniqueSet.js'
 
 const pkg = JSON.parse(await fs.promises.readFile('./package.json'))
 const program = `${pkg.name} v${pkg.version}`
@@ -105,7 +106,15 @@ export default class GerberWriter {
 
       g.comment('Aperture macro list end')
 
-      layer.forEach((shape, index) => {
+      const tools = new UniqueSet()
+
+      layer.forEach((shape) => {
+        const tool = toolFromShape(shape)
+
+        tools.add(tool)
+      })
+
+      tools.forEach((shape, index) => {
         if (shape.type === 'rect') {
           if (shape.radius) {
             g.apertureDefinition(index + 10, 'RoundedRect', [shape.radius, 0, 0, 0, shape.height, shape.width, shape.height, shape.width, 0])
@@ -124,8 +133,11 @@ export default class GerberWriter {
 
       layer.forEach((shape, index) => {
         const designator = `X${index + 1}`
+        const tool = toolFromShape(shape)
+        const toolIndex = tools.index(tool)
+
         g.comment(`Starting ${shape.type} ${designator}`)
-        g.selectAperture(index + 10)
+        g.selectAperture(toolIndex + 10)
         g.objectAttribute('C', designator)
 
         if (shape.type === 'rect') {
@@ -151,8 +163,6 @@ export default class GerberWriter {
 }
 
 function gerberStream(stream) {
-  let macro = false
-
   return {
     attribute(key, ...values) {
       stream.write(`%TF.${key},${values.join(',')}*%\n`)
@@ -310,4 +320,13 @@ function formatNumber(number, format = numberFormat) {
     minimumFractionDigits: format.decimal,
     maximumFractionDigits: format.decimal
   }).replace('.', '')
+}
+
+function toolFromShape(shape) {
+  const tool = { ...shape }
+
+  delete tool.cx
+  delete tool.cy
+
+  return tool
 }

@@ -1,5 +1,6 @@
 import path from 'path'
 import fs from 'fs'
+import UniqueSet from '../UniqueSet.js'
 
 export default class ExcellonWriter {
   constructor(board, { project, unit }) {
@@ -16,7 +17,7 @@ export default class ExcellonWriter {
 
   async #writeFile(folder, file, holes) {
     const filePath = path.join(folder, `${this.project}-${file}`)
-    const indexes = mapTools(holes)
+    const indexes = indexTools(holes)
     const io = fs.createWriteStream(filePath)
 
     // start header
@@ -28,7 +29,7 @@ export default class ExcellonWriter {
     io.write(`${this.unit.toUpperCase()}\n`)
 
     // specify tools
-    indexes.forEach((index, diameter) => {
+    indexes.forEach((diameter, index) => {
       io.write(`T${index}C${diameter}\n`)
     })
 
@@ -43,7 +44,7 @@ export default class ExcellonWriter {
 
     // specify holes
     holes.forEach((hole) => {
-      const index = indexes.get(hole.d)
+      const index = indexes.index(hole.d)
       const radius = hole.d / 2
 
       // choose tool
@@ -69,18 +70,12 @@ export default class ExcellonWriter {
   }
 }
 
-function mapTools(holes) {
-  const tools = new Set()
-  const indexes = new Map()
-
-  let count = 0
+function indexTools(holes) {
+  const set = new UniqueSet()
 
   holes.forEach(({ d: diameter }) => {
-    if (!tools.has(diameter)) {
-      tools.add(diameter)
-      indexes.set(diameter, ++count)
-    }
+    set.add(diameter)
   })
 
-  return indexes
+  return set
 }
