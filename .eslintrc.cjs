@@ -28,6 +28,7 @@ module.exports = {
     semi: ['error', 'never'],
     'object-curly-newline': 'off',
     'comma-dangle': ['error', 'never'],
-    'no-plusplus': 'off'
+    'no-plusplus': 'off',
+    'no-case-declarations': 'off'
   }
 }
