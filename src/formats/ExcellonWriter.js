@@ -30,7 +30,7 @@ export default class ExcellonWriter {
 
     // specify tools
     indexes.forEach((diameter, index) => {
-      io.write(`T${index+1}C0${diameter}\n`)
+      io.write(`T${index + 1}C0${diameter}\n`)
     })
 
     // end header
@@ -45,7 +45,6 @@ export default class ExcellonWriter {
     // specify holes
     holes.forEach((hole) => {
       const index = indexes.index(hole.d)
-      const radius = hole.d / 2
 
       // choose tool
       io.write(`T${index+1}\n`)
@@ -53,7 +52,7 @@ export default class ExcellonWriter {
       const point = this.#coordinate(hole)
 
       // specify drill position
-      io.write(`X${point.x - radius}Y${point.y - radius}\n`)
+      io.write(`X${formatNumber(point.x)}Y${formatNumber(point.y)}\n`)
     })
 
     // select no tool
@@ -78,4 +77,12 @@ function indexTools(holes) {
   })
 
   return set
+}
+
+function formatNumber(number) {
+  return number.toLocaleString(undefined, {
+    useGrouping: false,
+    minimumSignificantDigitsDigits: 1,
+    minimumFractionDigits: 1
+  })
 }
