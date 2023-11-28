@@ -38,15 +38,6 @@ if (command) {
 
   const board = new Board(outline)
 
-  board.holes.plated = [
-    { cx: 10, cy: 20, d: 5 },
-    { cx: 50, cy: 20, d: 15 }
-  ]
-
-  board.holes.unplated = [
-    { cx: 40, cy: 20, d: 5 }
-  ]
-
   board.components = [
     new Led({ x: 10, y: 10 }, 'L1'),
     new Led({ x: 13, y: 10 }, 'L2'),
