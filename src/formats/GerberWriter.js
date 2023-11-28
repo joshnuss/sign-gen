@@ -129,7 +129,7 @@ export default class GerberWriter {
         g.objectAttribute('C', designator)
 
         if (shape.type === 'rect') {
-          g.flash(this.#coordinate(shape))
+          g.flash(this.#coordinate({ x: shape.cx, y: shape.cy }))
         } else if (shape.type === 'circle') {
           g.flash(this.#coordinate({ x: shape.cx, y: shape.cy }))
         } else if (shape.type === 'polyline') {
