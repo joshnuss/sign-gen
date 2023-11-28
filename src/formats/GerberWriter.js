@@ -123,7 +123,7 @@ export default class GerberWriter {
           }
         } else if (shape.type === 'circle') {
           g.apertureDefinition(index + 10, shape.type, shape.r * 2)
-        } else if (shape.type === 'polyline') {
+        } else if (shape.type === 'polyline' || shape.type == 'path') {
           g.apertureDefinition(index + 10, 'circle', shape.stroke)
         }
       })
@@ -150,6 +150,14 @@ export default class GerberWriter {
           g.moveTo(this.#coordinate(first))
 
           rest.forEach((point) => g.lineTo(this.#coordinate(point)))
+        } else if (shape.type === 'path') {
+          shape.points.forEach((point) => {
+            if (point.type == 'move') {
+              g.moveTo(this.#coordinate(point))
+            } else {
+              g.lineTo(this.#coordinate(point))
+            }
+          })
         }
 
         g.deleteAllAttributes()

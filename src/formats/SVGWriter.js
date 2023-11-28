@@ -42,6 +42,18 @@ export default class SVGWriter {
             stream.write(`<polyline points="${shape.points.map((point) => `${point.x}, ${point.y}`).join(' ')}"`)
             break
 
+          case 'path':
+            const pathExpr = shape.points.map((step, index) => {
+              if (step.type === 'move') {
+                return `M${step.x},${step.y}`
+              }
+
+              return `L${step.x},${step.y}`
+            }).join(' ')
+
+            stream.write(`<path d="${pathExpr}"`)
+            break
+
           case 'circle':
             stream.write(`<circle cx="${shape.cx}" cy="${shape.cy}" r="${shape.r}"`)
             break
