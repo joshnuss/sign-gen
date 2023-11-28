@@ -73,13 +73,45 @@ export default class GerberWriter {
       g.comment('Aperture list')
       g.comment('Aperture macro list')
 
+      const roundedRect = g.macro('RoundedRect')
+
+      roundedRect.comment('Rectangle with rounded corners')
+      roundedRect.comment('$1 Rounding radius')
+      roundedRect.comment('$2 $3 $4 $5 $6 $7 $8 $9 X,Y pos of 4 corners')
+      roundedRect.comment('Add a 4 corners polygon primitive as box body')
+
+      roundedRect.outline([
+        {x: 4, y: 5},
+        {x: 6, y: 7},
+        {x: 8, y: 9},
+        {x: 2, y: 3},
+      ])
+
+      roundedRect.comment('Add four circle primitives for the rounded corners')
+
+      roundedRect.circle('$1+$1', '$2', '$3')
+      roundedRect.circle('$1+$1', '$4', '$5')
+      roundedRect.circle('$1+$1', '$6', '$7')
+      roundedRect.circle('$1+$1', '$8', '$9')
+
+      roundedRect.comment('Add four rect primitives between the rounded corners')
+
+      roundedRect.rect('$1+$1', '$2', '$3', '$4', '$5')
+      roundedRect.rect('$1+$1', '$4', '$5', '$6', '$7')
+      roundedRect.rect('$1+$1', '$6', '$7', '$8', '$9')
+      roundedRect.rect('$1+$1', '$8', '$9', '$2', '$3')
+
+      roundedRect.end()
+
       g.comment('Aperture macro list end')
 
       layer.forEach((shape, index) => {
         if (shape.type === 'rect') {
-          const size = `${shape.width}X${shape.height}`
-
-          g.apertureDefinition(index + 10, shape.type, size)
+          if (shape.radius) {
+            g.apertureDefinition(index + 10, 'RoundedRect', [shape.radius, 0, 0, 0, shape.height, shape.width, shape.height, shape.width, 0])
+          } else {
+            g.apertureDefinition(index + 10, shape.type, [shape.width, shape.height])
+          }
         } else if (shape.type === 'circle') {
           g.apertureDefinition(index + 10, shape.type, shape.r * 2)
         } else if (shape.type === 'polyline') {
@@ -98,7 +130,7 @@ export default class GerberWriter {
 
         if (shape.type === 'rect') {
           g.flash(this.#coordinate(shape))
-        } else if (shape.type === 'circle' ) {
+        } else if (shape.type === 'circle') {
           g.flash(this.#coordinate({ x: shape.cx, y: shape.cy }))
         } else if (shape.type === 'polyline') {
           const [first, ...rest] = shape.points
@@ -127,11 +159,7 @@ function gerberStream(stream) {
     },
 
     comment(text) {
-      if (macro) {
-        stream.write(`0 ${text}*\n`)
-      } else {
-        stream.write(`G04 ${text}*\n`)
-      }
+      stream.write(`G04 ${text}*\n`)
     },
 
     specification(option, format) {
@@ -160,8 +188,10 @@ function gerberStream(stream) {
       stream.write(`%TA.${key},${values.join(',')}*%\n`)
     },
 
-    apertureDefinition(number, type, size) {
-      stream.write(`%ADD${number}${apertureTypes[type]},${size}*%\n`)
+    apertureDefinition(number, type, sizes) {
+      const size = Array.isArray(sizes) ? sizes.join('X') : sizes
+
+      stream.write(`%ADD${number}${apertureTypes[type] || type},${size}*%\n`)
     },
 
     deleteAllAttributes() {
@@ -194,6 +224,80 @@ function gerberStream(stream) {
 
     endOfFile() {
       stream.write('M02*\n')
+    },
+
+    macro(name) {
+      const lines = []
+
+      function writeComment({ text }) {
+        stream.write(`0 ${text}*`)
+      }
+
+      function writeOutline({ points }) {
+        const start = points[points.length - 1]
+        const pointString = points.map(({ x, y }) => `$${x},$${y}`).join(',')
+
+        stream.write(`4,1,${points.length},$${start.x},$${start.y},${pointString},0*`)
+      }
+
+      function writeCircle({ diameter, x, y, exposure }) {
+        stream.write(`1,${exposure ? 1 : 0},${diameter},${x},${y}*`)
+      }
+
+      function writeRect({ width, startX, startY, endX, endY, exposure }) {
+        stream.write(`20,${exposure ? 1 : 0},${width},${startX},${startY},${endX},${endY},0*`)
+      }
+
+      return {
+        comment(text) {
+          lines.push({ type: 'comment', text })
+        },
+
+        outline(points) {
+          lines.push({ type: 'outline', points })
+        },
+
+        circle(diameter, x, y, { exposure = true } = {}) {
+          lines.push({ type: 'circle', diameter, x, y, exposure })
+        },
+
+        rect(width, startX, startY, endX, endY, { exposure = true } = {}) {
+          lines.push({ type: 'rect', width, startX, startY, endX, endY, exposure })
+        },
+
+        end() {
+          stream.write(`%AM${name}*\n`)
+
+          lines.forEach((line, index) => {
+            switch (line.type) {
+              case 'comment':
+                writeComment(line)
+                break
+
+              case 'outline':
+                writeOutline(line)
+                break
+
+              case 'circle':
+                writeCircle(line)
+                break
+
+              case 'rect':
+                writeRect(line)
+                break
+
+              default:
+                throw Error(`Unexpected macro line type '${line.type}'`)
+            }
+
+            if (index === lines.length - 1) {
+              stream.write('%')
+            }
+
+            stream.write('\n')
+          })
+        }
+      }
     }
   }
 }
