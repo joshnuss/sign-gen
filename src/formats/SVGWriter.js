@@ -22,15 +22,15 @@ export default class SVGWriter {
     await this.#writeHoles(folder, 'holes.unplated.svg', holes.unplated)
 
     await this.#writeBoard(folder, 'board.svg', [
-      { file: 'silkscreen.top.svg', color: 'red' },
-      { file: 'mask.top.svg', color: 'red' },
+      { file: 'silkscreen.top.svg', color: 'black' },
+      { file: 'mask.top.svg', color: '#2225' },
       { file: 'copper.top.svg', color: 'red' },
       { file: 'copper.bottom.svg', color: 'blue' },
-      { file: 'mask.bottom.svg', color: 'red' },
-      { file: 'silkscreen.bottom.svg', color: 'red' },
-      { file: 'holes.plated.svg', color: 'yellow' },
-      { file: 'holes.unplated.svg', color: 'brown' },
-      { file: 'edge.svg', color: 'green' }
+      { file: 'mask.bottom.svg', color: '#2225' },
+      { file: 'silkscreen.bottom.svg', color: 'yellow' },
+      { file: 'holes.plated.svg', color: 'orange' },
+      { file: 'holes.unplated.svg', color: 'purple' },
+      { file: 'edge.svg', color: 'gray' }
     ])
   }
 
