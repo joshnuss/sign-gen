@@ -8,18 +8,18 @@ export default class Led extends BaseComponent {
   radius = 0.25
 
   copperTop() {
-    return this.pads()
+    return this.#pads()
   }
 
   maskTop() {
-    return this.pads()
+    return this.#pads()
   }
 
   pasteTop() {
-    return this.pads()
+    return this.#pads()
   }
 
-  pads() {
+  #pads() {
     return [
       { type: 'rect', ...this.point, ...this.pad, draw: 'fill', radius: this.radius },
       { type: 'rect', ...this.point, y: this.point.y + this.pad.height + this.spacing, ...this.pad, draw: 'fill', radius: this.radius }
