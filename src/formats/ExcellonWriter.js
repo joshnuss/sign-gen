@@ -30,7 +30,7 @@ export default class ExcellonWriter {
 
     // specify tools
     indexes.forEach((diameter, index) => {
-      io.write(`T${index}C${diameter}\n`)
+      io.write(`T${index+1}C0${diameter}\n`)
     })
 
     // end header
@@ -48,7 +48,7 @@ export default class ExcellonWriter {
       const radius = hole.d / 2
 
       // choose tool
-      io.write(`T${index}\n`)
+      io.write(`T${index+1}\n`)
 
       const point = this.#coordinate(hole)
 
