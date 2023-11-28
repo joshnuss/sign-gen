@@ -2,7 +2,7 @@
 import sade from 'sade'
 import path from 'path'
 import fs from 'fs'
-import { read } from './src/ModelReader.js'
+import { read } from './src/OutlineReader.js'
 import BoardWriter from './src/BoardWriter.js'
 
 const pkg = JSON.parse(await fs.promises.readFile('./package.json'))
@@ -28,9 +28,9 @@ if (command) {
   const [inputFile, outputFolder, options] = command.args
   const project = path.parse(inputFile).name
 
-  const model = await read(inputFile, options.segments)
+  const outline = await read(inputFile, options.segments)
 
-  model.scale(options.scale)
+  outline.scale(options.scale)
 
   const layers = {
     paste: {
@@ -51,7 +51,10 @@ if (command) {
     copper: {
       top: [
         { type: 'circle', cx: 4, cy: 10, r: 10, draw: 'fill' },
-        { type: 'rect', x: 20, y: 20, width: 40, height: 80, draw: 'stroke', stroke: 4, radius: 8 }
+        { type: 'rect', x: 100, y: 20, width: 40, height: 80, draw: 'stroke', stroke: 4, radius: 8 },
+        { type: 'rect', x: 120, y: 50, width: 40, height: 80, draw: 'stroke', stroke: 4, radius: 2 },
+        { type: 'rect', x: 80, y: 20, width: 40, height: 80, draw: 'stroke', stroke: 4 },
+        { type: 'polyline', points: [{ x: 0, y: 20 }, { x: 2, y: 55 }, { x: 2, y: 60 }, { x: 30, y: 20 }, { x: 50, y: 100 }], stroke: 1 }
       ],
       bottom: []
     }
@@ -69,10 +72,10 @@ if (command) {
       ]
     },
     outline: [
-      { type: 'polyline', points: model.points, stroke: 10 }
+      { type: 'polyline', points: outline.points, stroke: 10 }
     ],
-    width: model.width,
-    height: model.height
+    width: outline.width,
+    height: outline.height
   }
 
   await createDirs(outputFolder)

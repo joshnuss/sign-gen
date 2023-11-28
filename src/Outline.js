@@ -1,4 +1,4 @@
-export default class Model {
+export default class Outline {
   constructor(points) {
     this.points = points
     this.compute()

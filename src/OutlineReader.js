@@ -3,7 +3,7 @@ import potrace from 'potrace'
 import { createSVGDocument } from 'svgdom'
 import { temporaryFile } from 'tempy'
 import util from 'util'
-import Model from './Model.js'
+import Outline from './Outline.js'
 
 const trace = util.promisify(potrace.trace)
 
@@ -12,11 +12,11 @@ export async function read(path, segments) {
   const svg = await trace(bitmapPath)
   const shape = extractPath(svg)
   const points = flatten(shape, segments)
-  const model = new Model(points)
+  const outline = new Outline(points)
 
-  model.translate(-model.min.x, -model.min.y)
+  outline.translate(-outline.min.x, -outline.min.y)
 
-  return model
+  return outline
 }
 
 async function convertToBmp(path) {
