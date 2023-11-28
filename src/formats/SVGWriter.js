@@ -47,7 +47,7 @@ export default class SVGWriter {
             break
 
           case 'rect':
-            stream.write(`<rect x="${shape.x}" y="${shape.y}" width="${shape.width}" height="${shape.height}"`)
+            stream.write(`<rect x="${shape.cx-(shape.width/2)}" y="${shape.cy-(shape.height/2)}" width="${shape.width}" height="${shape.height}"`)
 
             if (shape.radius) {
               stream.write(` rx="${shape.radius}"`)
@@ -81,7 +81,7 @@ export default class SVGWriter {
   async #writeHoles(folder, file, holes) {
     await this.#writeFile(folder, file, (stream) => {
       holes.forEach((hole) => {
-        stream.write(`<circle cx="${hole.cx}" cy="${hole.cy}" r="${hole.d/2}" fill="currentColor"/>`)
+        stream.write(`<circle cx="${hole.cx}" cy="${hole.cy}" r="${hole.d / 2}" fill="currentColor"/>`)
       })
     })
   }
