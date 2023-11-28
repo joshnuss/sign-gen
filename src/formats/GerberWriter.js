@@ -117,7 +117,7 @@ export default class GerberWriter {
       tools.forEach((shape, index) => {
         if (shape.type === 'rect') {
           if (shape.radius) {
-            g.apertureDefinition(index + 10, 'RoundedRect', [shape.radius, 0, 0, 0, shape.height, shape.width, shape.height, shape.width, 0])
+            g.apertureDefinition(index + 10, 'RoundedRect', [shape.radius, -shape.width/2 + shape.radius, -shape.height/2 + shape.radius, -shape.width/2 + shape.radius, shape.height/2 - shape.radius, shape.width/2 - shape.radius, shape.height/2 - shape.radius, shape.width/2 - shape.radius, -shape.height/2 + shape.radius])
           } else {
             g.apertureDefinition(index + 10, shape.type, [shape.width, shape.height])
           }
