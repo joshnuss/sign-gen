@@ -18,7 +18,7 @@ export default class Net {
     if (via) {
       this.steps.push({ type: 'via', x, y })
       this.#toggleLayer()
-      this.steps.push({ type: 'point', x, y, layer: this.layer })
+      this.steps.push({ type: 'move', x, y, layer: this.layer })
     }
   }
 

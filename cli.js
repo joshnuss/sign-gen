@@ -7,6 +7,7 @@ import BoardWriter from './src/BoardWriter.js'
 import Board from './src/Board.js'
 import Led from './src/components/Led.js'
 import Connector from './src/components/Connector.js'
+import Net from './src/Net.js'
 
 const pkg = JSON.parse(await fs.promises.readFile('./package.json'))
 const prog = sade(pkg.name)
@@ -39,12 +40,43 @@ if (command) {
 
   const board = new Board(outline)
 
-  board.components = [
-    new Led({ cx: 10, cy: 10 }, 'L1'),
-    new Led({ cx: 13, cy: 10 }, 'L2'),
-    new Led({ cx: 16, cy: 10 }, 'L3'),
-    new Connector({ cx: 20, cy: 20 }, 'J1')
-  ]
+  const gridSize = 16
+  const grid = {
+    x: gridSize,
+    y: gridSize
+  }
+
+  const dimensions = {
+    columns: board.width / grid.x,
+    rows: board.height / grid.y
+  }
+
+  for (let y = 0; y < dimensions.rows; y++) {
+    const net = new Net('top')
+
+    net.moveTo(grid.x, grid.y * y)
+
+    for (let x = 0; x < dimensions.columns; x++) {
+      board.components.push(new Led({ cx: x * grid.x, cy: y * grid.y }, 'L2'))
+
+      net.lineTo(x * grid.x, y * grid.y)
+    }
+
+    board.nets.push(net)
+  }
+
+  for (let x = 0; x < dimensions.columns; x++) {
+    const net = new Net('top')
+
+    net.moveTo(grid.x * x, 2)
+
+    for (let y = 0; y < dimensions.rows; y++) {
+      net.lineTo(x * grid.x, (y * grid.y) + 5, { via: true })
+      net.lineTo(x * grid.x, (y * grid.y) + 7)
+    }
+
+    board.nets.push(net)
+  }
 
   board.layout()
 
