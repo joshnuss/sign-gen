@@ -51,28 +51,52 @@ if (command) {
     rows: board.height / grid.y
   }
 
+  const rows = []
+
   for (let y = 0; y < dimensions.rows; y++) {
+    const row = []
+
+    for (let x = 0; x < dimensions.columns; x++) {
+      const led = new Led({ cx: x * grid.x, cy: y * grid.y }, 'L2')
+      row.push(led)
+    }
+
+    rows.push(row)
+  }
+
+  for (let y = 0; y < rows.length; y++) {
+    const row = rows[y]
     const net = new Net('top')
 
     net.moveTo(grid.x, grid.y * y)
 
-    for (let x = 0; x < dimensions.columns; x++) {
-      board.components.push(new Led({ cx: x * grid.x, cy: y * grid.y }, 'L2'))
+    for (let x = 0; x < row.length; x++) {
+      const component = row[x]
 
-      net.lineTo(x * grid.x, y * grid.y)
+      if (component) {
+        board.components.push(component)
+
+        net.lineTo(x * grid.x, y * grid.y)
+      }
     }
 
     board.nets.push(net)
   }
 
   for (let x = 0; x < dimensions.columns; x++) {
-    const net = new Net('top')
+    const net = new Net('bottom')
 
     net.moveTo(grid.x * x, 2)
 
     for (let y = 0; y < dimensions.rows; y++) {
-      net.lineTo(x * grid.x, (y * grid.y) + 5, { via: true })
-      net.lineTo(x * grid.x, (y * grid.y) + 7)
+      const component = rows[y][x]
+
+      if (component) {
+        const { point } = component
+
+        net.lineTo(point.cx, point.cy + 5, { via: true })
+        net.lineTo(point.cx, point.cy + 7)
+      }
     }
 
     board.nets.push(net)
